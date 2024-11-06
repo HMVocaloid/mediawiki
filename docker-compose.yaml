@@ -1,0 +1,40 @@
+version: '3.7'
+
+services:
+  mediawiki:
+    image: mediawiki:latest
+    container_name: mediawiki
+    ports:
+      - "8080:80"
+    environment:
+      - MW_DB_SERVER=db
+      - MW_DB_USER=mediawiki
+      - MW_DB_PASSWORD=mediawiki_password
+      - MW_DB_NAME=mediawiki_db
+    volumes:
+      - mediawiki_data:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - mediawiki_network
+
+  db:
+    image: mysql:5.7
+    container_name: mediawiki_db
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password
+      - MYSQL_DATABASE=mediawiki_db
+      - MYSQL_USER=mediawiki
+      - MYSQL_PASSWORD=mediawiki_password
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - mediawiki_network
+
+volumes:
+  mediawiki_data:
+  db_data:
+
+networks:
+  mediawiki_network:
+    driver: bridge
